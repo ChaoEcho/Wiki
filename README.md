@@ -44,3 +44,52 @@ IDEA自带的测试接口工具
 ### 3.4 热部署
 
 ![image-20220720161229495](https://echochao.oss-cn-hangzhou.aliyuncs.com/img/20220720161229.png)
+
+## 4. 配置Lombok插件
+
+### 4.1 安装插件
+
+![image-20220720164551662](https://echochao.oss-cn-hangzhou.aliyuncs.com/img/20220720164551.png)
+
+### 4.2 添加依赖
+
+```xml
+<dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+    <version>1.18.22</version>
+</dependency>
+```
+
+## 5. Mybatis配置
+
+### 5.1 添加依赖
+
+```xml
+<!--Mybatis-->
+<dependency>
+    <groupId>org.mybatis.spring.boot</groupId>
+    <artifactId>mybatis-spring-boot-starter</artifactId>
+    <version>2.1.3</version>
+</dependency>
+
+<!--Mysql For Java-->
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>8.0.22</version>
+</dependency>
+```
+
+### 5.2 修改配置文件
+
+```xml
+# 增加数据库连接
+spring.datasource.url=jdbc:mysql://localhost:3306/wiki?characterEncoding=UTF8&autoReconnect=true&serverTimezone=Asia/Shanghai&allowMultiQueries=true
+spring.datasource.username=wiki
+spring.datasource.password=******
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+#配置mybatis所有Mapper.xml所在的路径
+mybatis.mapper-locations=classpath:/mapper/**/*.xml
+```
