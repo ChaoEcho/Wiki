@@ -122,3 +122,7 @@ mybatis.mapper-locations=classpath:/mapper/**/*.xml
 #### 2）创建相关配置文件
 
 ![image-20220720213631598](https://echochao.oss-cn-hangzhou.aliyuncs.com/img/20220720213631.png)
+
+#### 3）运行配置文件
+
+![image-20220720214036770](https://echochao.oss-cn-hangzhou.aliyuncs.com/img/20220720214036.png)

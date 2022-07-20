@@ -2,9 +2,12 @@ package com.jiawa.wiki.mapper;
 
 import com.jiawa.wiki.domain.Demo;
 import com.jiawa.wiki.domain.DemoExample;
-import java.util.List;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
+@Mapper
 public interface DemoMapper {
     long countByExample(DemoExample example);
 
