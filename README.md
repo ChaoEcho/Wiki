@@ -126,3 +126,28 @@ mybatis.mapper-locations=classpath:/mapper/**/*.xml
 #### 3）运行配置文件
 
 ![image-20220720214036770](https://echochao.oss-cn-hangzhou.aliyuncs.com/img/20220720214036.png)
+
+## 6. 通用返回配置类
+
+```JAVA
+@Data
+public class CommonResp<T> {
+
+    /**
+     * 业务上的成功或失败
+     */
+    private boolean success = true;
+
+    /**
+     * 返回信息
+     */
+    private String message;
+
+    /**
+     * 返回泛型数据，自定义类型
+     */
+    private T content;
+}
+```
+
+根据我的经验，还可以进一步进行改造完善
