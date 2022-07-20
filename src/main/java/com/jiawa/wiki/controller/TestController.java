@@ -13,7 +13,7 @@ public class TestController {
 
     @RequestMapping(value = "/hello/{id}",method = {RequestMethod.GET,RequestMethod.POST})
     public String hello(@PathVariable String id){
-        return "Hello World!"+id;
+        return "Hello World!"+id+"Hello Test";
     }
 
 }
