@@ -93,3 +93,32 @@ spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 #配置mybatis所有Mapper.xml所在的路径
 mybatis.mapper-locations=classpath:/mapper/**/*.xml
 ```
+
+### 5.3 Mybatis Generator配置
+
+#### 1）添加依赖插件
+
+```xml
+<!-- mybatis generator 自动生成代码插件 -->
+<plugin>
+    <groupId>org.mybatis.generator</groupId>
+    <artifactId>mybatis-generator-maven-plugin</artifactId>
+    <version>1.4.0</version>
+    <configuration>
+        <configurationFile>src/main/resources/generator/generator-config.xml</configurationFile>
+        <overwrite>true</overwrite>
+        <verbose>true</verbose>
+    </configuration>
+    <dependencies>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.22</version>
+        </dependency>
+    </dependencies>
+</plugin>
+```
+
+#### 2）创建相关配置文件
+
+![image-20220720213631598](https://echochao.oss-cn-hangzhou.aliyuncs.com/img/20220720213631.png)
