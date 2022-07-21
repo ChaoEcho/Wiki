@@ -175,3 +175,26 @@ public class CorsConfig implements WebMvcConfigurer {
 }
 ```
 
+## 8. 前端图标导入
+
+```javascript
+import {createApp} from 'vue'
+import App from './App.vue'
+import router from './router'
+import store from './store'
+import Antd from 'ant-design-vue'
+import 'ant-design-vue/dist/antd.css'
+import * as Icons from '@ant-design/icons-vue'
+
+const app = createApp(App);
+app.use(store).use(router).use(Antd)
+    .mount('#app')
+
+//全局使用图标
+const icons: any = Icons
+for (const i in icons) {
+    app.component(i, icons[i]);
+}
+```
+
+![image-20220721160136248](https://echochao.oss-cn-hangzhou.aliyuncs.com/img/20220721160136.png)
