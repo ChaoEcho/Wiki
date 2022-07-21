@@ -1,11 +1,11 @@
-package com.jiawa.wiki.domain;
+package com.jiawa.wiki.resp;
 
 import lombok.Data;
 import lombok.ToString;
 
 @Data
 @ToString
-public class Ebook {
+public class EbookResp {
     private Long id;
 
     private String name;

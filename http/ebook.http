@@ -1,4 +1,4 @@
-GET http://{{host}}/ebook/list
+GET http://{{host}}/ebook/list?name=Spring
 Accept: application/json
 
 
