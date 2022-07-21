@@ -1,3 +1,4 @@
+/*
 package com.jiawa.wiki.filter;
 
 import org.slf4j.Logger;
@@ -31,3 +32,4 @@ public class LogFilter implements Filter {
         LOG.info("------------- LogFilter 结束 耗时：{} ms -------------", System.currentTimeMillis() - startTime);
     }
 }
+*/

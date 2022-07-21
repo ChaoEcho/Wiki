@@ -1,3 +1,4 @@
+/*
 package com.jiawa.wiki.config;
 
 import com.jiawa.wiki.interceptor.LogInterceptor;
@@ -17,3 +18,4 @@ public class SpringMvcConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**");
     }
 }
+*/
