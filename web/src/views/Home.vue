@@ -84,7 +84,6 @@
 
 <script lang="js">
 import {defineComponent, onMounted, ref, reactive,toRef} from 'vue';
-import { StarOutlined, LikeOutlined, MessageOutlined } from '@ant-design/icons-vue';
 import axios from 'axios';
 
 const listData = [];
