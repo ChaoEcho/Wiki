@@ -104,12 +104,6 @@ export default defineComponent({
       })
     });
 
-    const pagination = {
-      onChange: page => {
-        console.log(page);
-      },
-      pageSize: 3,
-    };
     const actions = [{
       type: 'StarOutlined',
       text: '156',
@@ -123,10 +117,19 @@ export default defineComponent({
 
     return {
       listData,
-      pagination,
       actions,
       ebooks,
     }
   }
 });
 </script>
+
+<style scoped>
+  .ant-avatar{
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    border-radius: 8%;
+    margin: 5px 0;
+  }
+</style>
