@@ -3,14 +3,13 @@ package com.jiawa.wiki.controller;
 import com.jiawa.wiki.req.EbookReq;
 import com.jiawa.wiki.resp.CommonResp;
 import com.jiawa.wiki.resp.EbookResp;
+import com.jiawa.wiki.resp.PageResp;
 import com.jiawa.wiki.service.EbookService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 /**
  * Created by echo on 2022/7/20 21:42
@@ -24,12 +23,10 @@ public class EbookController {
     private EbookService ebookService;
 
     @GetMapping("/list")
-    public CommonResp<List<EbookResp>> list(EbookReq ebookReq){
-        CommonResp<List<EbookResp>> resp=new CommonResp<>();
-        List<EbookResp> list = ebookService.list(ebookReq);
-        resp.setContent(list);
+    public CommonResp<PageResp<EbookResp>> list(EbookReq ebookReq){
+        CommonResp<PageResp<EbookResp>> resp=new CommonResp<>();
+        PageResp<EbookResp> pageResp = ebookService.list(ebookReq);
+        resp.setContent(pageResp);
         return resp;
     }
-
-
 }
