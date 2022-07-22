@@ -198,3 +198,60 @@ for (const i in icons) {
 ```
 
 ![image-20220721160136248](https://echochao.oss-cn-hangzhou.aliyuncs.com/img/20220721160136.png)
+
+## 9. Swagger
+
+### 9.1 添加依赖
+
+后两者都是UI，二者任选其一即可，推荐`swagger-bootstrap-ui`
+
+![image-20220722110633643](https://echochao.oss-cn-hangzhou.aliyuncs.com/img/20220722110633.png)
+
+```XML
+<!--Swagger-->
+<dependency>
+    <groupId>io.springfox</groupId>
+    <artifactId>springfox-swagger2</artifactId>
+    <version>2.7.0</version>
+</dependency>
+
+<!--Swagger UI-->
+<dependency>
+    <groupId>com.github.xiaoymin</groupId>
+    <artifactId>swagger-bootstrap-ui</artifactId>
+    <version>1.8.7</version>
+</dependency>
+```
+
+### 9.2 属性配置
+
+配置之后打开路径是`baseURL+/doc.html`
+
+```JAVA
+@Configuration
+@EnableSwagger2
+@EnableSwaggerBootstrapUI
+public class Swagger2UiConfig extends WebMvcConfigurerAdapter {
+
+    @Bean
+    public Docket api() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .apiInfo(apiInfo())
+                .select()
+                .apis(Predicates.not(RequestHandlerSelectors.basePackage("org.springframework.boot")))
+                .build();
+    }
+
+    private ApiInfo apiInfo() {
+        return new ApiInfoBuilder()
+                .title("swagger演示")
+                .description("API文档展示")
+                .version("0.0.1")
+                .build();
+    }
+}
+```
+
+### 9.3 常用注解
+
+![image-20220722111021034](https://echochao.oss-cn-hangzhou.aliyuncs.com/img/20220722111021.png)
