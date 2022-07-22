@@ -6,6 +6,7 @@ import com.jiawa.wiki.resp.EbookResp;
 import com.jiawa.wiki.resp.PageResp;
 import com.jiawa.wiki.service.EbookService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,12 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/ebook")
-@Api(value = "电子书管理接口")
+@Api(tags = "电子书管理接口")
 public class EbookController {
 
     @Autowired
     private EbookService ebookService;
 
+    @ApiOperation(value = "查询电子书")
     @GetMapping("/list")
     public CommonResp<PageResp<EbookResp>> list(EbookReq ebookReq){
         CommonResp<PageResp<EbookResp>> resp=new CommonResp<>();
