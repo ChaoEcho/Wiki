@@ -17,7 +17,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/ebook")
-@Api(value = "电子书接口")
+@Api(value = "电子书管理接口")
 public class EbookController {
 
     @Autowired
