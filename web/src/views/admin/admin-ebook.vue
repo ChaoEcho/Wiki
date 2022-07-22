@@ -12,7 +12,7 @@
           @change="handleTableChange"
       >
         <template #cover="{ text: cover }">
-          <img v-if="cover" :src="cover" alt="avatar" />
+          <a-avatar :src="cover"/>
         </template>
         <template v-slot:action="{ text, record }">
           <a-space size="small">
@@ -28,33 +28,7 @@
     </a-layout-content>
   </a-layout>
 
-  <a-modal
-      title="电子书表单"
-      v-model:visible="modalVisible"
-      :confirm-loading="modalLoading"
-      @ok="handleModalOk"
-  >
-    <a-form :model="ebook" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
-      <a-form-item label="封面">
-        <a-input v-model:value="ebook.cover" />
-      </a-form-item>
-      <a-form-item label="名称">
-        <a-input v-model:value="ebook.name" />
-      </a-form-item>
-      <a-form-item label="分类">
-        <a-cascader
-            v-model:value="categoryIds"
-            :field-names="{ label: 'name', value: 'id', children: 'children' }"
-            :options="level1"
-        />
-      </a-form-item>
-      <a-form-item label="描述">
-        <a-input v-model:value="ebook.description" type="textarea" />
-      </a-form-item>
-    </a-form>
-  </a-modal>
 </template>
-
 
 <script lang="ts">
 import { defineComponent, onMounted, ref } from 'vue';
@@ -151,3 +125,12 @@ export default defineComponent({
 });
 </script>
 
+<style scoped>
+.ant-avatar{
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  border-radius: 8%;
+  margin: 5px 0;
+}
+</style>
