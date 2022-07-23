@@ -1,16 +1,15 @@
 package com.jiawa.wiki.controller;
 
-import com.jiawa.wiki.req.EbookReq;
+import com.jiawa.wiki.req.EbookQueryReq;
+import com.jiawa.wiki.req.EbookSaveReq;
 import com.jiawa.wiki.resp.CommonResp;
-import com.jiawa.wiki.resp.EbookResp;
+import com.jiawa.wiki.resp.EbookQueryResp;
 import com.jiawa.wiki.resp.PageResp;
 import com.jiawa.wiki.service.EbookService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Created by echo on 2022/7/20 21:42
@@ -25,10 +24,18 @@ public class EbookController {
 
     @ApiOperation(value = "查询电子书")
     @GetMapping("/list")
-    public CommonResp<PageResp<EbookResp>> list(EbookReq ebookReq){
-        CommonResp<PageResp<EbookResp>> resp=new CommonResp<>();
-        PageResp<EbookResp> pageResp = ebookService.list(ebookReq);
+    public CommonResp<PageResp<EbookQueryResp>> list(EbookQueryReq ebookQueryReq){
+        CommonResp<PageResp<EbookQueryResp>> resp=new CommonResp<>();
+        PageResp<EbookQueryResp> pageResp = ebookService.list(ebookQueryReq);
         resp.setContent(pageResp);
+        return resp;
+    }
+
+    @ApiOperation(value = "保存更新信息")
+    @PostMapping("/save")
+    public CommonResp list(@RequestBody EbookSaveReq ebookQueryReq){
+        CommonResp resp=new CommonResp<>();
+        ebookService.save(ebookQueryReq);
         return resp;
     }
 }

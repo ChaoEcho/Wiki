@@ -5,8 +5,9 @@ import com.github.pagehelper.PageInfo;
 import com.jiawa.wiki.domain.Ebook;
 import com.jiawa.wiki.domain.EbookExample;
 import com.jiawa.wiki.mapper.EbookMapper;
-import com.jiawa.wiki.req.EbookReq;
-import com.jiawa.wiki.resp.EbookResp;
+import com.jiawa.wiki.req.EbookQueryReq;
+import com.jiawa.wiki.req.EbookSaveReq;
+import com.jiawa.wiki.resp.EbookQueryResp;
 import com.jiawa.wiki.resp.PageResp;
 import com.jiawa.wiki.util.CopyUtil;
 import org.slf4j.Logger;
@@ -22,13 +23,13 @@ import java.util.List;
  */
 @Service
 public class EbookService {
-    
+
     private static final Logger LOG= LoggerFactory.getLogger(EbookService.class);
 
     @Autowired
     private EbookMapper ebookMapper;
 
-    public PageResp<EbookResp> list(EbookReq req) {
+    public PageResp<EbookQueryResp> list(EbookQueryReq req) {
         EbookExample ebookExample = new EbookExample();
         EbookExample.Criteria criteria = ebookExample.createCriteria();
 
@@ -45,10 +46,23 @@ public class EbookService {
         LOG.info("总行数："+pageInfo.getTotal());
         LOG.info("总页数："+pageInfo.getPages());
 
-        List<EbookResp> ebookRespList = CopyUtil.copyList(ebookList, EbookResp.class);
-        PageResp<EbookResp> pageResp=new PageResp<>();
-        pageResp.setList(ebookRespList);
+        List<EbookQueryResp> ebookQueryRespList = CopyUtil.copyList(ebookList, EbookQueryResp.class);
+        PageResp<EbookQueryResp> pageResp=new PageResp<>();
+        pageResp.setList(ebookQueryRespList);
         pageResp.setTotal(pageInfo.getTotal());
         return pageResp;
+    }
+
+    //既要支持新增也要支持更新
+    public void save(EbookSaveReq ebookQueryReq) {
+        Ebook ebook=CopyUtil.copy(ebookQueryReq,Ebook.class);
+        if(ObjectUtils.isEmpty(ebookQueryReq.getId())){
+            //新增
+            ebookMapper.insert(ebook);
+        }
+        else{
+            //更新
+            ebookMapper.updateByPrimaryKey(ebook);
+        }
     }
 }

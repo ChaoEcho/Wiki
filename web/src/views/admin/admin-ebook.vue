@@ -155,10 +155,18 @@ export default defineComponent({
     //确认按钮，2秒结束
     const handleModalOk = () => {
       modalLoading.value = true;
-      setTimeout(() => {
-        modalVisible.value = false;
-        modalLoading.value = false;
-      },2000);
+      axios.post("/ebook/save", ebook.value).then((response)=>{
+        const data = response.data;
+        if(data.success){
+          modalLoading.value=false;
+          modalVisible.value=false;
+
+          handleQuery({
+            page: pagination.value.current,
+            size: pagination.value.pageSize
+          });
+        }
+      });
     };
 
     //编辑按钮
