@@ -16,7 +16,7 @@
         </template>
         <template v-slot:action="{ text, record }">
           <a-space size="small">
-            <a-button type="primary" @click="edit" >
+            <a-button type="primary" @click="edit(record)">
               编辑
             </a-button>
             <a-button type="danger">
@@ -34,8 +34,28 @@
       :confirm-loading="modalLoading"
       @ok="handleModalOk"
   >
-    <p>test</p>
+
+    <a-form :model="ebook" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
+      <a-form-item label="封面">
+        <a-input v-model:value="ebook.cover" />
+      </a-form-item>
+      <a-form-item label="名称">
+        <a-input v-model:value="ebook.name" />
+      </a-form-item>
+      <a-form-item label="分类">
+        <a-cascader
+            v-model:value="categoryIds"
+            :field-names="{ label: 'name', value: 'id', children: 'children' }"
+            :options="level1"
+        />
+      </a-form-item>
+      <a-form-item label="描述">
+        <a-input v-model:value="ebook.description" type="textarea" />
+      </a-form-item>
+    </a-form>
+
   </a-modal>
+
 </template>
 
 
@@ -45,13 +65,7 @@ import axios from 'axios';
 export default defineComponent({
   name: 'AdminEbook',
   setup() {
-    const ebooks = ref();
-    const pagination = ref({
-      current: 1,
-      pageSize: 2,
-      total: 0
-    });
-    const loading = ref(false);
+    //首行属性列表
     const columns = [
       {
         title: '封面',
@@ -84,17 +98,28 @@ export default defineComponent({
         dataIndex: 'voteCount'
       },
       {
-        title: 'Action',
+        title: '操作',
         key: 'action',
         slots: { customRender: 'action' }
       }
     ];
-    /**
-     * 数据查询
-     **/
+
+    //显示缓冲效果
+    const loading = ref(false);
+
+    //查询到的电子书列表
+    const ebooks = ref();
+
+    //分页相关变量
+    const pagination = ref({
+      current: 1,
+      pageSize: 2,
+      total: 0
+    });
+
+    //数据查询函数
     const handleQuery = (params: any) => {
       loading.value = true;
-      // 如果不清空现有数据，则编辑保存重新加载数据后，再点编辑，则列表显示的还是编辑前的数据
       axios.get("/ebook/list", {
         params: {
           page: params.page,
@@ -109,22 +134,25 @@ export default defineComponent({
         pagination.value.total = data.content.total;
       });
     };
-    /**
-     * 表格点击页码时触发
-     */
+
+    //表格点击页码时触发
     const handleTableChange = (pagination: any) => {
-      console.log("看看自带的分页参数都有啥：" + pagination);
       handleQuery({
         page: pagination.current,
         size: pagination.pageSize
       });
     };
-// -------- 表单 ---------
-    /**
-     * 数组，[100, 101]对应：前端开发 / Vue
-     */
+
+    //表单
+    const ebook = ref({});
+
+    //是否显示
     const modalVisible = ref(false);
+
+    //是否缓冲
     const modalLoading = ref(false);
+
+    //确认按钮，2秒结束
     const handleModalOk = () => {
       modalLoading.value = true;
       setTimeout(() => {
@@ -132,28 +160,33 @@ export default defineComponent({
         modalLoading.value = false;
       },2000);
     };
-    /**
-     * 编辑
-     */
-    const edit = () => {
+
+    //编辑按钮
+    const edit = (record: any) => {
       modalVisible.value = true;
+      ebook.value = record;
     };
+
+    //生命周期函数，页面一打开执行的函数
     onMounted(() => {
       handleQuery({
         page: 1,
         size: pagination.value.pageSize
       });
     });
+
+    //返回参数
     return {
       ebooks,
       pagination,
       columns,
-      loading,
       handleTableChange,
       edit,
+      ebook,
+      loading,
       modalVisible,
       modalLoading,
-      handleModalOk
+      handleModalOk,
     }
   }
 });
