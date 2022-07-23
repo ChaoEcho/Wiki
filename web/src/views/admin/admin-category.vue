@@ -15,7 +15,7 @@
             <a-button
                 type="primary"
                 size="large"
-                @click="handleQuery({page: 1,size: pagination.pageSize})"
+                @click="handleQuery()"
             >
               查询
             </a-button>
@@ -30,10 +30,10 @@
       <a-table
           :columns="columns"
           :row-key="record => record.id"
-          :data-source="categorys"
-          :pagination="pagination"
+          :data-source="level1"
           :loading="loading"
-          @change="handleTableChange"
+          :pagination="false"
+          :defaultExpandAllRows="true"
       >
         <template v-slot:action="{ text, record }">
           <a-space size="small">
@@ -89,9 +89,6 @@ import {Tool} from "@/util/tool";
 export default defineComponent({
   name: 'AdminCategory',
   setup() {
-    const param = ref();
-    param.value = {};
-
     //首行属性列表
     const columns = [
       {
@@ -120,42 +117,38 @@ export default defineComponent({
     //查询到的分类列表
     const categorys = ref();
 
+    /**
+     * 一级分类树，children属性就是二级分类
+     * [{
+     *   id: "",
+     *   name: "",
+     *   children: [{
+     *     id: "",
+     *     name: "",
+     *   }]
+     * }]
+     */
+    const level1 = ref(); // 一级分类树，children属性就是二级分类
+    level1.value = [];
 
-    //分页相关变量
-    const pagination = ref({
-      current: 1,
-      pageSize: 10,
-      total: 0
-    });
-
-    //查询函数
-    const handleQuery = (params: any) => {
+    /**
+     * 数据查询
+     **/
+    const handleQuery = () => {
       loading.value = true;
-      axios.get("/category/list", {
-        params: {
-          page: params.page,
-          size: params.size,
-          name: param.value.name,
-        }
-      }).then((response) => {
+      // 如果不清空现有数据，则编辑保存重新加载数据后，再点编辑，则列表显示的还是编辑前的数据
+      level1.value = [];
+      axios.get("/category/all").then((response) => {
         loading.value = false;
         const data = response.data;
         if (data.success) {
-          categorys.value = data.content.list;
-          // 重置分页按钮
-          pagination.value.current = params.page;
-          pagination.value.total = data.content.total;
+          categorys.value = data.content;
+          level1.value = [];
+          level1.value = Tool.array2Tree(categorys.value, 0);
+          console.log("树形结构：", level1);
         } else {
-          message.error(data.message,3);
+          message.error(data.message);
         }
-      });
-    };
-
-    //页码跳转
-    const handleTableChange = (pagination: any) => {
-      handleQuery({
-        page: pagination.current,
-        size: pagination.pageSize
       });
     };
 
@@ -168,6 +161,9 @@ export default defineComponent({
     //是否缓冲
     const modalLoading = ref(false);
 
+    const param = ref();
+    param.value = {};
+
     //确认按钮，2秒结束
     const handleModalOk = () => {
       modalLoading.value = true;
@@ -176,10 +172,7 @@ export default defineComponent({
         modalLoading.value = false;
         if (data.success) {
           modalVisible.value = false;
-          handleQuery({
-            page: pagination.value.current,
-            size: pagination.value.pageSize
-          });
+          handleQuery();
         } else {
           message.error(data.message,3);
         }
@@ -187,16 +180,13 @@ export default defineComponent({
     };
 
     //删除功能
-    const handleDelete = (id: string) => {
+    const handleDelete = (id: number) => {
       axios.delete("/category/delete/" + id).then((response) => {
         const data = response.data;
         modalLoading.value = false;
         if (data.success) {
           modalVisible.value = false;
-          handleQuery({
-            page: pagination.value.current,
-            size: pagination.value.pageSize
-          });
+          handleQuery();
         } else {
           message.error(data.message,3);
         }
@@ -217,10 +207,7 @@ export default defineComponent({
 
     //生命周期函数，页面一打开执行的函数
     onMounted(() => {
-      handleQuery({
-        page: 1,
-        size: pagination.value.pageSize
-      });
+      handleQuery();
     });
 
 
@@ -228,15 +215,14 @@ export default defineComponent({
     return {
       //变量
       categorys,
-      pagination,
       columns,
       category,
       loading,
       modalVisible,
       modalLoading,
       param,
+      level1,
       //函数
-      handleTableChange,
       edit,
       handleModalOk,
       add,

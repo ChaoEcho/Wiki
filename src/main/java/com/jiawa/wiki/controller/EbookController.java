@@ -24,7 +24,7 @@ public class EbookController {
     @Autowired
     private EbookService ebookService;
 
-    @ApiOperation(value = "查询电子书")
+    @ApiOperation(value = "分页查询电子书")
     @GetMapping("/list")
     public CommonResp<PageResp<EbookQueryResp>> list(@Valid EbookQueryReq ebookQueryReq){
         CommonResp<PageResp<EbookQueryResp>> resp=new CommonResp<>();
@@ -33,7 +33,7 @@ public class EbookController {
         return resp;
     }
 
-    @ApiOperation(value = "保存更新信息")
+    @ApiOperation(value = "保存电子书更新信息")
     @PostMapping("/save")
     public CommonResp save(@Valid @RequestBody EbookSaveReq ebookQueryReq){
         CommonResp resp=new CommonResp<>();
@@ -43,9 +43,9 @@ public class EbookController {
 
     @ApiOperation(value = "删除电子书")
     @DeleteMapping("/delete/{id}")
-    public CommonResp delete(@PathVariable String id){
+    public CommonResp delete(@PathVariable Long id){
         CommonResp resp=new CommonResp<>();
-        ebookService.delete(Long.parseLong(id));
+        ebookService.delete(id);
         return resp;
     }
 }

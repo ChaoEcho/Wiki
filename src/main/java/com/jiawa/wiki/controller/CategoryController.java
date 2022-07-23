@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * Created by echo on 2022/7/20 21:42
@@ -24,7 +25,7 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
-    @ApiOperation(value = "查询电子书")
+    @ApiOperation(value = "分页查询分类")
     @GetMapping("/list")
     public CommonResp<PageResp<CategoryQueryResp>> list(@Valid CategoryQueryReq categoryQueryReq){
         CommonResp<PageResp<CategoryQueryResp>> resp=new CommonResp<>();
@@ -33,7 +34,16 @@ public class CategoryController {
         return resp;
     }
 
-    @ApiOperation(value = "保存更新信息")
+    @ApiOperation(value = "查询所有分类")
+    @GetMapping("/all")
+    public CommonResp<List<CategoryQueryResp>> all(){
+        CommonResp<List<CategoryQueryResp>> resp=new CommonResp<>();
+        List<CategoryQueryResp> all = categoryService.all();
+        resp.setContent(all);
+        return resp;
+    }
+
+    @ApiOperation(value = "保存分类更新信息")
     @PostMapping("/save")
     public CommonResp save(@Valid @RequestBody CategorySaveReq categoryQueryReq){
         CommonResp resp=new CommonResp<>();
@@ -41,7 +51,7 @@ public class CategoryController {
         return resp;
     }
 
-    @ApiOperation(value = "删除电子书")
+    @ApiOperation(value = "删除分类")
     @DeleteMapping("/delete/{id}")
     public CommonResp delete(@PathVariable String id){
         CommonResp resp=new CommonResp<>();

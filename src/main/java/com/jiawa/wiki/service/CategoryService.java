@@ -35,8 +35,7 @@ public class CategoryService {
 
     public PageResp<CategoryQueryResp> list(CategoryQueryReq req) {
         CategoryExample categoryExample = new CategoryExample();
-        CategoryExample.Criteria criteria = categoryExample.createCriteria();
-
+        categoryExample.setOrderByClause("sort asc");
         /**
          * 只对第一个SQL语句有效
          */
@@ -51,6 +50,14 @@ public class CategoryService {
         pageResp.setList(categoryQueryRespList);
         pageResp.setTotal(pageInfo.getTotal());
         return pageResp;
+    }
+
+    public List<CategoryQueryResp> all() {
+        CategoryExample categoryExample = new CategoryExample();
+        categoryExample.setOrderByClause("sort asc");
+        List<Category> categoryList = categoryMapper.selectByExample(categoryExample);
+        List<CategoryQueryResp> categoryQueryRespList = CopyUtil.copyList(categoryList, CategoryQueryResp.class);
+        return categoryQueryRespList;
     }
 
     //既要支持新增也要支持更新

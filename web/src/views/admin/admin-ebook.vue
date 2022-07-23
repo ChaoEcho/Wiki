@@ -214,7 +214,7 @@ export default defineComponent({
     };
 
     //删除功能
-    const handleDelete = (id: string) => {
+    const handleDelete = (id: number) => {
       axios.delete("/ebook/delete/" + id).then((response) => {
         const data = response.data;
         modalLoading.value = false;
