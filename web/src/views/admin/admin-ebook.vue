@@ -4,9 +4,28 @@
         :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
     >
       <p>
-        <a-button type="primary" @click="add()" size="large">
-          新增
-        </a-button>
+        <a-form
+            layout="inline"
+            :model="param"
+        >
+          <a-form-item>
+            <a-input size="large" v-model:value="param.name" placeholder="查询内容"></a-input>
+          </a-form-item>
+          <a-form-item>
+            <a-button
+                type="primary"
+                size="large"
+                @click="handleQuery({page: 1,size: pagination.pageSize})"
+            >
+              查询
+            </a-button>
+          </a-form-item>
+          <a-form-item>
+            <a-button type="primary" @click="add()" size="large">
+              新增
+            </a-button>
+          </a-form-item>
+        </a-form>
       </p>
       <a-table
           :columns="columns"
@@ -17,7 +36,7 @@
           @change="handleTableChange"
       >
         <template #cover="{ text: cover }">
-          <a-avatar v-if="cover" :src="cover" alt="avatar" />
+          <a-avatar v-if="cover" :src="cover" alt="avatar"/>
         </template>
         <template v-slot:action="{ text, record }">
           <a-space size="small">
@@ -50,10 +69,10 @@
 
     <a-form :model="ebook" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
       <a-form-item label="封面">
-        <a-input v-model:value="ebook.cover" />
+        <a-input v-model:value="ebook.cover"/>
       </a-form-item>
       <a-form-item label="名称">
-        <a-input v-model:value="ebook.name" />
+        <a-input v-model:value="ebook.name"/>
       </a-form-item>
       <a-form-item label="分类">
         <a-cascader
@@ -63,7 +82,7 @@
         />
       </a-form-item>
       <a-form-item label="描述">
-        <a-input v-model:value="ebook.description" type="textarea" />
+        <a-input v-model:value="ebook.description" type="textarea"/>
       </a-form-item>
     </a-form>
 
@@ -73,18 +92,23 @@
 
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue';
+import {defineComponent, onMounted, ref, reactive, UnwrapRef} from 'vue';
 import axios from 'axios';
 import {message} from "ant-design-vue";
+import {ValidateErrorEntity} from 'ant-design-vue/es/form/interface';
+
 export default defineComponent({
   name: 'AdminEbook',
   setup() {
+    const param = ref();
+    param.value = {};
+
     //首行属性列表
     const columns = [
       {
         title: '封面',
         dataIndex: 'cover',
-        slots: { customRender: 'cover' }
+        slots: {customRender: 'cover'}
       },
       {
         title: '名称',
@@ -114,7 +138,7 @@ export default defineComponent({
       {
         title: '操作',
         key: 'action',
-        slots: { customRender: 'action' }
+        slots: {customRender: 'action'}
       }
     ];
 
@@ -137,17 +161,18 @@ export default defineComponent({
       axios.get("/ebook/list", {
         params: {
           page: params.page,
-          size: params.size
+          size: params.size,
+          name: param.value.name,
         }
-      }).then((response)=>{
+      }).then((response) => {
         loading.value = false;
         const data = response.data;
-        if(data.success){
+        if (data.success) {
           ebooks.value = data.content.list;
           // 重置分页按钮
           pagination.value.current = params.page;
           pagination.value.total = data.content.total;
-        }else {
+        } else {
           message.error(data.message);
         }
       });
@@ -173,16 +198,16 @@ export default defineComponent({
     //确认按钮，2秒结束
     const handleModalOk = () => {
       modalLoading.value = true;
-      axios.post("/ebook/save", ebook.value).then((response)=>{
+      axios.post("/ebook/save", ebook.value).then((response) => {
         const data = response.data;
-        modalLoading.value=false;
-        if(data.success){
-          modalVisible.value=false;
+        modalLoading.value = false;
+        if (data.success) {
+          modalVisible.value = false;
           handleQuery({
             page: pagination.value.current,
             size: pagination.value.pageSize
           });
-        }else {
+        } else {
           message.error(data.message);
         }
       });
@@ -190,16 +215,16 @@ export default defineComponent({
 
     //删除功能
     const handleDelete = (id: string) => {
-      axios.delete("/ebook/delete/"+id).then((response)=>{
+      axios.delete("/ebook/delete/" + id).then((response) => {
         const data = response.data;
-        modalLoading.value=false;
-        if(data.success){
-          modalVisible.value=false;
+        modalLoading.value = false;
+        if (data.success) {
+          modalVisible.value = false;
           handleQuery({
             page: pagination.value.current,
             size: pagination.value.pageSize
           });
-        }else {
+        } else {
           message.error(data.message);
         }
       });
@@ -225,31 +250,37 @@ export default defineComponent({
       });
     });
 
+
     //返回参数
     return {
+      //变量
       ebooks,
       pagination,
       columns,
-      handleTableChange,
-      edit,
       ebook,
       loading,
       modalVisible,
       modalLoading,
+      param,
+      //函数
+      handleTableChange,
+      edit,
       handleModalOk,
       add,
       handleDelete,
+      handleQuery,
     }
-  }
+  },
+
 });
 </script>
 
 <style scoped>
-  .ant-avatar{
-    width: 50px;
-    height: 50px;
-    line-height: 50px;
-    border-radius: 8%;
-    margin: 5px 0;
-  }
+.ant-avatar {
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  border-radius: 8%;
+  margin: 5px 0;
+}
 </style>
