@@ -101,11 +101,11 @@ export default defineComponent({
       {
         title: '父分类',
         key: 'parent',
-        dateIndex: 'parent'
+        dataIndex: 'parent'
       },
       {
         title: '顺序',
-        dateIndex: 'sort'
+        dataIndex: 'sort'
       },
       {
         title: '操作',
@@ -142,20 +142,6 @@ export default defineComponent({
         const data = response.data;
         if (data.success) {
           categorys.value = data.content.list;
-  /*        categorys.value=[
-            {
-              "id": 100,
-              "name": "Vue",
-              "parent": 101,
-              "sort": 100,
-            },
-            {
-              "id": 100,
-              "name": "React",
-              "parent": 101,
-              "sort": 100,
-            }
-          ]*/
           // 重置分页按钮
           pagination.value.current = params.page;
           pagination.value.total = data.content.total;

@@ -117,11 +117,11 @@ export default defineComponent({
       {
         title: '分类一',
         key: 'category1Id',
-        dateIndex: 'category1Id'
+        dataIndex: 'category1Id'
       },
       {
         title: '分类二',
-        dateIndex: 'category2Id'
+        dataIndex: 'category2Id'
       },
       {
         title: '文档数',
