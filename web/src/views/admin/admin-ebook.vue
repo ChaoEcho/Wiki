@@ -36,7 +36,7 @@
           @change="handleTableChange"
       >
         <template #cover="{ text: cover }">
-          <a-avatar v-if="cover" :src="cover" alt="avatar"/>
+          <a-avatar :src="cover" alt="avatar"/>
         </template>
         <template v-slot:action="{ text, record }">
           <a-space size="small">
@@ -92,10 +92,10 @@
 
 
 <script lang="ts">
-import {defineComponent, onMounted, ref, reactive, UnwrapRef} from 'vue';
+import {defineComponent, onMounted, ref} from 'vue';
 import axios from 'axios';
 import {message} from "ant-design-vue";
-import {ValidateErrorEntity} from 'ant-design-vue/es/form/interface';
+import {Tool} from "@/util/tool";
 
 export default defineComponent({
   name: 'AdminEbook',
@@ -233,7 +233,7 @@ export default defineComponent({
     //编辑按钮
     const edit = (record: any) => {
       modalVisible.value = true;
-      ebook.value = record;
+      ebook.value = Tool.copy(record);
     };
 
     //新增按钮
