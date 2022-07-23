@@ -27,8 +27,8 @@ public class CategoryController {
 
     @ApiOperation(value = "分页查询分类")
     @GetMapping("/list")
-    public CommonResp<PageResp<CategoryQueryResp>> list(@Valid CategoryQueryReq categoryQueryReq){
-        CommonResp<PageResp<CategoryQueryResp>> resp=new CommonResp<>();
+    public CommonResp<PageResp<CategoryQueryResp>> list(@Valid CategoryQueryReq categoryQueryReq) {
+        CommonResp<PageResp<CategoryQueryResp>> resp = new CommonResp<>();
         PageResp<CategoryQueryResp> pageResp = categoryService.list(categoryQueryReq);
         resp.setContent(pageResp);
         return resp;
@@ -36,8 +36,8 @@ public class CategoryController {
 
     @ApiOperation(value = "查询所有分类")
     @GetMapping("/all")
-    public CommonResp<List<CategoryQueryResp>> all(){
-        CommonResp<List<CategoryQueryResp>> resp=new CommonResp<>();
+    public CommonResp<List<CategoryQueryResp>> all() {
+        CommonResp<List<CategoryQueryResp>> resp = new CommonResp<>();
         List<CategoryQueryResp> all = categoryService.all();
         resp.setContent(all);
         return resp;
@@ -45,17 +45,20 @@ public class CategoryController {
 
     @ApiOperation(value = "保存分类更新信息")
     @PostMapping("/save")
-    public CommonResp save(@Valid @RequestBody CategorySaveReq categoryQueryReq){
-        CommonResp resp=new CommonResp<>();
+    public CommonResp save(@Valid @RequestBody CategorySaveReq categoryQueryReq) {
+        CommonResp resp = new CommonResp<>();
         categoryService.save(categoryQueryReq);
         return resp;
     }
 
     @ApiOperation(value = "删除分类")
     @DeleteMapping("/delete/{id}")
-    public CommonResp delete(@PathVariable String id){
-        CommonResp resp=new CommonResp<>();
-        categoryService.delete(Long.parseLong(id));
+    public CommonResp delete(@PathVariable String id) {
+        CommonResp resp = new CommonResp<>();
+        if (!categoryService.delete(Long.parseLong(id))) {
+            resp.setSuccess(false);
+            resp.setMessage("父分类中还含有子分类！");
+        }
         return resp;
     }
 }

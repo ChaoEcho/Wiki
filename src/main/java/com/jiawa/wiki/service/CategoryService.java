@@ -25,7 +25,7 @@ import java.util.List;
 @Service
 public class CategoryService {
 
-    private static final Logger LOG= LoggerFactory.getLogger(CategoryService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CategoryService.class);
 
     @Autowired
     private CategoryMapper categoryMapper;
@@ -39,14 +39,14 @@ public class CategoryService {
         /**
          * 只对第一个SQL语句有效
          */
-        PageHelper.startPage(req.getPage(),req.getSize());
+        PageHelper.startPage(req.getPage(), req.getSize());
         List<Category> categoryList = categoryMapper.selectByExample(categoryExample);
-        PageInfo<Category> pageInfo=new PageInfo<>(categoryList);
-        LOG.info("总行数："+pageInfo.getTotal());
-        LOG.info("总页数："+pageInfo.getPages());
+        PageInfo<Category> pageInfo = new PageInfo<>(categoryList);
+        LOG.info("总行数：" + pageInfo.getTotal());
+        LOG.info("总页数：" + pageInfo.getPages());
 
         List<CategoryQueryResp> categoryQueryRespList = CopyUtil.copyList(categoryList, CategoryQueryResp.class);
-        PageResp<CategoryQueryResp> pageResp=new PageResp<>();
+        PageResp<CategoryQueryResp> pageResp = new PageResp<>();
         pageResp.setList(categoryQueryRespList);
         pageResp.setTotal(pageInfo.getTotal());
         return pageResp;
@@ -62,19 +62,29 @@ public class CategoryService {
 
     //既要支持新增也要支持更新
     public void save(CategorySaveReq categoryQueryReq) {
-        Category category=CopyUtil.copy(categoryQueryReq,Category.class);
-        if(ObjectUtils.isEmpty(categoryQueryReq.getId())){
+        Category category = CopyUtil.copy(categoryQueryReq, Category.class);
+        if (ObjectUtils.isEmpty(categoryQueryReq.getId())) {
             //新增
             category.setId(snowFlake.nextId());
             categoryMapper.insert(category);
-        }
-        else{
+        } else {
             //更新
             categoryMapper.updateByPrimaryKey(category);
         }
     }
 
-    public void delete(Long id) {
+    public boolean delete(Long id) {
+        Category category = categoryMapper.selectByPrimaryKey(id);
+        if (category.getParent() == 0L) {
+            CategoryExample categoryExample = new CategoryExample();
+            CategoryExample.Criteria criteria = categoryExample.createCriteria();
+            criteria.andParentEqualTo(id);
+            List<Category> categories = categoryMapper.selectByExample(categoryExample);
+            if (!ObjectUtils.isEmpty(categories)) {
+                return false;
+            }
+        }
         categoryMapper.deleteByPrimaryKey(id);
+        return true;
     }
 }
