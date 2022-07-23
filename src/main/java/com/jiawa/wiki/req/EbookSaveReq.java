@@ -3,11 +3,14 @@ package com.jiawa.wiki.req;
 import lombok.Data;
 import lombok.ToString;
 
+import javax.validation.constraints.NotNull;
+
 @Data
 @ToString
 public class EbookSaveReq {
     private Long id;
 
+    @NotNull(message = "[名称]不能为空")
     private String name;
 
     private Long category1Id;

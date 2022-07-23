@@ -11,6 +11,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 /**
  * Created by echo on 2022/7/20 21:42
  */
@@ -24,7 +26,7 @@ public class EbookController {
 
     @ApiOperation(value = "查询电子书")
     @GetMapping("/list")
-    public CommonResp<PageResp<EbookQueryResp>> list(EbookQueryReq ebookQueryReq){
+    public CommonResp<PageResp<EbookQueryResp>> list(@Valid EbookQueryReq ebookQueryReq){
         CommonResp<PageResp<EbookQueryResp>> resp=new CommonResp<>();
         PageResp<EbookQueryResp> pageResp = ebookService.list(ebookQueryReq);
         resp.setContent(pageResp);
@@ -33,7 +35,7 @@ public class EbookController {
 
     @ApiOperation(value = "保存更新信息")
     @PostMapping("/save")
-    public CommonResp save(@RequestBody EbookSaveReq ebookQueryReq){
+    public CommonResp save(@Valid @RequestBody EbookSaveReq ebookQueryReq){
         CommonResp resp=new CommonResp<>();
         ebookService.save(ebookQueryReq);
         return resp;
