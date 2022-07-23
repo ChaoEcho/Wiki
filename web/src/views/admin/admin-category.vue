@@ -101,7 +101,7 @@ export default defineComponent({
       {
         title: '父分类',
         key: 'parent',
-        dateIndex: 'parent'
+        dataIndex: 'parent'
       },
       {
         title: '顺序',
