@@ -16,7 +16,7 @@
         </template>
         <template v-slot:action="{ text, record }">
           <a-space size="small">
-            <a-button type="primary" >
+            <a-button type="primary" @click="edit" >
               编辑
             </a-button>
             <a-button type="danger">
@@ -34,24 +34,7 @@
       :confirm-loading="modalLoading"
       @ok="handleModalOk"
   >
-    <a-form :model="ebook" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
-      <a-form-item label="封面">
-        <a-input v-model:value="ebook.cover" />
-      </a-form-item>
-      <a-form-item label="名称">
-        <a-input v-model:value="ebook.name" />
-      </a-form-item>
-      <a-form-item label="分类">
-        <a-cascader
-            v-model:value="categoryIds"
-            :field-names="{ label: 'name', value: 'id', children: 'children' }"
-            :options="level1"
-        />
-      </a-form-item>
-      <a-form-item label="描述">
-        <a-input v-model:value="ebook.description" type="textarea" />
-      </a-form-item>
-    </a-form>
+    <p>test</p>
   </a-modal>
 </template>
 
@@ -65,7 +48,7 @@ export default defineComponent({
     const ebooks = ref();
     const pagination = ref({
       current: 1,
-      pageSize: 4,
+      pageSize: 2,
       total: 0
     });
     const loading = ref(false);
@@ -136,6 +119,25 @@ export default defineComponent({
         size: pagination.pageSize
       });
     };
+// -------- 表单 ---------
+    /**
+     * 数组，[100, 101]对应：前端开发 / Vue
+     */
+    const modalVisible = ref(false);
+    const modalLoading = ref(false);
+    const handleModalOk = () => {
+      modalLoading.value = true;
+      setTimeout(() => {
+        modalVisible.value = false;
+        modalLoading.value = false;
+      },2000);
+    };
+    /**
+     * 编辑
+     */
+    const edit = () => {
+      modalVisible.value = true;
+    };
     onMounted(() => {
       handleQuery({
         page: 1,
@@ -147,7 +149,11 @@ export default defineComponent({
       pagination,
       columns,
       loading,
-      handleTableChange
+      handleTableChange,
+      edit,
+      modalVisible,
+      modalLoading,
+      handleModalOk
     }
   }
 });
