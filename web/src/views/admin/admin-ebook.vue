@@ -173,7 +173,7 @@ export default defineComponent({
           pagination.value.current = params.page;
           pagination.value.total = data.content.total;
         } else {
-          message.error(data.message);
+          message.error(data.message,3);
         }
       });
     };
@@ -208,7 +208,7 @@ export default defineComponent({
             size: pagination.value.pageSize
           });
         } else {
-          message.error(data.message);
+          message.error(data.message,3);
         }
       });
     };
@@ -225,7 +225,7 @@ export default defineComponent({
             size: pagination.value.pageSize
           });
         } else {
-          message.error(data.message);
+          message.error(data.message,3);
         }
       });
     };
