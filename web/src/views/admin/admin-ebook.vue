@@ -38,6 +38,9 @@
         <template #cover="{ text: cover }">
           <a-avatar :src="cover" alt="avatar"/>
         </template>
+        <template v-slot:category="{ text, record }">
+          <span>{{ getCategoryName(record.category1Id) }} / {{ getCategoryName(record.category2Id) }}</span>
+        </template>
         <template v-slot:action="{ text, record }">
           <a-space size="small">
             <a-button type="primary" @click="edit(record)">
@@ -115,13 +118,8 @@ export default defineComponent({
         dataIndex: 'name'
       },
       {
-        title: '分类一',
-        key: 'category1Id',
-        dataIndex: 'category1Id'
-      },
-      {
-        title: '分类二',
-        dataIndex: 'category2Id'
+        title: '分类',
+        slots: { customRender: 'category' }
       },
       {
         title: '文档数',
@@ -158,6 +156,7 @@ export default defineComponent({
     //查询函数
     const handleQuery = (params: any) => {
       loading.value = true;
+      ebooks.value = [];
       axios.get("/ebook/list", {
         params: {
           page: params.page,
@@ -186,8 +185,12 @@ export default defineComponent({
       });
     };
 
+    const categoryIds = ref();
+
     //表单
-    const ebook = ref({});
+    const ebook = ref();
+
+
 
     //是否显示
     const modalVisible = ref(false);
@@ -198,6 +201,8 @@ export default defineComponent({
     //确认按钮，2秒结束
     const handleModalOk = () => {
       modalLoading.value = true;
+      ebook.value.category1Id = categoryIds.value[0];
+      ebook.value.category2Id = categoryIds.value[1];
       axios.post("/ebook/save", ebook.value).then((response) => {
         const data = response.data;
         modalLoading.value = false;
@@ -234,6 +239,7 @@ export default defineComponent({
     const edit = (record: any) => {
       modalVisible.value = true;
       ebook.value = Tool.copy(record);
+      categoryIds.value = [ebook.value.category1Id, ebook.value.category2Id];
     };
 
     //新增按钮
@@ -242,8 +248,43 @@ export default defineComponent({
       ebook.value = {};
     };
 
+    const level1 =  ref();
+    let categorys: any;
+    /**
+     * 查询所有分类
+     **/
+    const handleQueryCategory = () => {
+      loading.value = true;
+      axios.get("/category/all").then((response) => {
+        loading.value = false;
+        const data = response.data;
+        if (data.success) {
+          console.log("原始数组：", categorys);
+          categorys = data.content;
+          level1.value = [];
+          level1.value = Tool.array2Tree(categorys, 0);
+          console.log("树形结构：", level1.value);
+        } else {
+          message.error(data.message);
+        }
+      });
+    };
+
+    const getCategoryName = (cid: number) => {
+      // console.log(cid)
+      let result = "";
+      categorys.forEach((item: any) => {
+        if (item.id === cid) {
+          // return item.name; // 注意，这里直接return不起作用
+          result = item.name;
+        }
+      });
+      return result;
+    };
+
     //生命周期函数，页面一打开执行的函数
     onMounted(() => {
+      handleQueryCategory();
       handleQuery({
         page: 1,
         size: pagination.value.pageSize
@@ -262,6 +303,8 @@ export default defineComponent({
       modalVisible,
       modalLoading,
       param,
+      categoryIds,
+      level1,
       //函数
       handleTableChange,
       edit,
@@ -269,6 +312,7 @@ export default defineComponent({
       add,
       handleDelete,
       handleQuery,
+      getCategoryName,
     }
   },
 
