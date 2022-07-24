@@ -41,6 +41,9 @@ public class EbookService {
             criteria.andNameLike("%"+req.getName()+"%");
         }
 
+        if (!ObjectUtils.isEmpty(req.getCategoryId2())) {
+            criteria.andCategory2IdEqualTo(req.getCategoryId2());
+        }
         /**
          * 只对第一个SQL语句有效
          */
