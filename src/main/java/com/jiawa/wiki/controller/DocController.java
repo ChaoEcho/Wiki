@@ -4,12 +4,13 @@ import com.jiawa.wiki.req.DocQueryReq;
 import com.jiawa.wiki.req.DocSaveReq;
 import com.jiawa.wiki.resp.CommonResp;
 import com.jiawa.wiki.resp.DocQueryResp;
-import com.jiawa.wiki.resp.PageResp;
 import com.jiawa.wiki.service.DocService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -29,8 +30,8 @@ public class DocController {
 
     @GetMapping("/list")
     public CommonResp list(@Valid DocQueryReq req) {
-        CommonResp<PageResp<DocQueryResp>> resp = new CommonResp<>();
-        PageResp<DocQueryResp> list = docService.list(req);
+        CommonResp<List<DocQueryResp>> resp = new CommonResp<>();
+        List<DocQueryResp> list = docService.list(req);
         resp.setContent(list);
         return resp;
     }
@@ -42,10 +43,15 @@ public class DocController {
         return resp;
     }
 
-    @DeleteMapping("/delete/{id}")
-    public CommonResp delete(@PathVariable Long id){
+    @DeleteMapping("/delete/{idsStr}")
+    public CommonResp delete(@PathVariable String idsStr){
         CommonResp resp = new CommonResp<>();
-        docService.delete(id);
+        List<String> list = Arrays.asList(idsStr.split(","));
+        List<Long> res = new ArrayList<>();
+        for (String str : list) {
+            res.add(Long.valueOf(str));
+        }
+        docService.delete(res);
         return resp;
     }
 }

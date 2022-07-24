@@ -1,8 +1,10 @@
 package com.jiawa.wiki.req;
 
-public class DocQueryReq extends PageReq {
-    @Override
-    public String toString() {
-        return "DocQueryReq{} " + super.toString();
-    }
+import lombok.Data;
+import lombok.ToString;
+
+@Data
+@ToString
+public class DocQueryReq {
+    private Long ebookId;
 }
