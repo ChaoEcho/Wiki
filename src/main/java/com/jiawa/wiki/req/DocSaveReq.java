@@ -26,4 +26,6 @@ public class DocSaveReq {
 
     private Integer voteCount;
 
+    @NotNull(message = "【content】不能为空")
+    private String content;
 }

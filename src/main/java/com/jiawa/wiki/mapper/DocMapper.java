@@ -2,9 +2,12 @@ package com.jiawa.wiki.mapper;
 
 import com.jiawa.wiki.domain.Doc;
 import com.jiawa.wiki.domain.DocExample;
-import java.util.List;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
+@Mapper
 public interface DocMapper {
     long countByExample(DocExample example);
 

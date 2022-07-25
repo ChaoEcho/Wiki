@@ -3,8 +3,11 @@ package com.jiawa.wiki.mapper;
 import com.jiawa.wiki.domain.Content;
 import com.jiawa.wiki.domain.ContentExample;
 import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+@Mapper
 public interface ContentMapper {
     long countByExample(ContentExample example);
 
