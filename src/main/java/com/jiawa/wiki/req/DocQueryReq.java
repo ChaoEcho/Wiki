@@ -5,6 +5,6 @@ import lombok.ToString;
 
 @Data
 @ToString
-public class DocQueryReq {
+public class DocQueryReq extends PageReq{
     private Long ebookId;
 }

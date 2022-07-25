@@ -1,5 +1,7 @@
 package com.jiawa.wiki.service;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.jiawa.wiki.domain.Content;
 import com.jiawa.wiki.domain.Doc;
 import com.jiawa.wiki.domain.DocExample;
@@ -8,45 +10,55 @@ import com.jiawa.wiki.mapper.DocMapper;
 import com.jiawa.wiki.req.DocQueryReq;
 import com.jiawa.wiki.req.DocSaveReq;
 import com.jiawa.wiki.resp.DocQueryResp;
+import com.jiawa.wiki.resp.PageResp;
 import com.jiawa.wiki.util.CopyUtil;
 import com.jiawa.wiki.util.SnowFlake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import javax.annotation.Resource;
 import java.util.List;
 
-/**
- * Created by echo on 2022/7/24 9:40
- */
 @Service
 public class DocService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DocService.class);
 
-    @Autowired
+    @Resource
     private DocMapper docMapper;
 
-    @Autowired
-    private SnowFlake snowFlake = new SnowFlake(1, 1);
-
-    @Autowired
+    @Resource
     private ContentMapper contentMapper;
 
-    public List<DocQueryResp> list(DocQueryReq req) {
+    @Resource
+    private SnowFlake snowFlake = new SnowFlake(1, 1);
+
+    public PageResp<DocQueryResp> list(DocQueryReq req) {
         DocExample docExample = new DocExample();
         docExample.setOrderByClause("sort asc");
         DocExample.Criteria criteria = docExample.createCriteria();
-        criteria.andEbookIdEqualTo(req.getEbookId());
+        PageHelper.startPage(req.getPage(), req.getSize());
         List<Doc> docList = docMapper.selectByExample(docExample);
+
+        PageInfo<Doc> pageInfo = new PageInfo<>(docList);
+        LOG.info("总行数：{}", pageInfo.getTotal());
+        LOG.info("总页数：{}", pageInfo.getPages());
+
+
         List<DocQueryResp> respList = CopyUtil.copyList(docList, DocQueryResp.class);
-        return respList;
+
+        PageResp<DocQueryResp> pageResp = new PageResp<>();
+        pageResp.setTotal(pageInfo.getTotal());
+        pageResp.setList(respList);
+
+        return pageResp;
     }
 
-    public List<DocQueryResp> all() {
+    public List<DocQueryResp> all(Long ebookId) {
         DocExample docExample = new DocExample();
+        docExample.createCriteria().andEbookIdEqualTo(ebookId);
         docExample.setOrderByClause("sort asc");
         List<Doc> docList = docMapper.selectByExample(docExample);
 
@@ -94,7 +106,10 @@ public class DocService {
 
     public String findContent(Long id) {
         Content content = contentMapper.selectByPrimaryKey(id);
-        if(content==null)   content=new Content();
-        return content.getContent();
+        if (ObjectUtils.isEmpty(content)) {
+            return "";
+        } else {
+            return content.getContent();
+        }
     }
 }

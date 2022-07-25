@@ -4,8 +4,8 @@ import com.jiawa.wiki.req.DocQueryReq;
 import com.jiawa.wiki.req.DocSaveReq;
 import com.jiawa.wiki.resp.CommonResp;
 import com.jiawa.wiki.resp.DocQueryResp;
+import com.jiawa.wiki.resp.PageResp;
 import com.jiawa.wiki.service.DocService;
-import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -16,24 +16,23 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/doc")
-@Api(tags = "文档接口管理")
 public class DocController {
 
     @Resource
     private DocService docService;
 
-    @GetMapping("/all")
-    public CommonResp all() {
+    @GetMapping("/all/{ebookId}")
+    public CommonResp all(@PathVariable Long ebookId){
         CommonResp<List<DocQueryResp>> resp = new CommonResp<>();
-        List<DocQueryResp> list = docService.all();
+        List<DocQueryResp> list = docService.all(ebookId);
         resp.setContent(list);
         return resp;
     }
 
     @GetMapping("/list")
     public CommonResp list(@Valid DocQueryReq req) {
-        CommonResp<List<DocQueryResp>> resp = new CommonResp<>();
-        List<DocQueryResp> list = docService.list(req);
+        CommonResp<PageResp<DocQueryResp>> resp = new CommonResp<>();
+        PageResp<DocQueryResp> list = docService.list(req);
         resp.setContent(list);
         return resp;
     }
