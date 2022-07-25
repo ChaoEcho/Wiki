@@ -227,6 +227,8 @@ for (const i in icons) {
 
 配置之后打开路径是`baseURL+/doc.html`
 
+`@Profile({"dev", "test", "pre", "prod"})`配置作用路径
+
 ```JAVA
 @Configuration
 @EnableSwagger2
