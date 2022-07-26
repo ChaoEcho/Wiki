@@ -7,9 +7,9 @@ import com.jiawa.wiki.resp.DocQueryResp;
 import com.jiawa.wiki.resp.PageResp;
 import com.jiawa.wiki.service.DocService;
 import io.swagger.annotations.Api;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,7 +20,7 @@ import java.util.List;
 @Api(tags = "文档管理接口")
 public class DocController {
 
-    @Resource
+    @Autowired
     private DocService docService;
 
     @GetMapping("/all/{ebookId}")

@@ -18,11 +18,11 @@ import com.jiawa.wiki.util.CopyUtil;
 import com.jiawa.wiki.util.SnowFlake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 @Service
@@ -30,10 +30,10 @@ public class UserService {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserService.class);
 
-    @Resource
+    @Autowired
     private UserMapper userMapper;
 
-    @Resource
+    @Autowired
     private SnowFlake snowFlake = new SnowFlake(1, 1);
 
     public PageResp<UserQueryResp> list(UserQueryReq req) {

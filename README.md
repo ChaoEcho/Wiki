@@ -257,3 +257,35 @@ public class Swagger2UiConfig extends WebMvcConfigurerAdapter {
 ### 9.3 常用注解
 
 ![image-20220722111021034](https://echochao.oss-cn-hangzhou.aliyuncs.com/img/20220722111021.png)
+
+## 10. Redis
+
+### 10.1 添加依赖
+
+```XML
+<!--Redis-->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-redis</artifactId>
+</dependency>
+```
+
+### 10.2 配置编码
+
+```JAVA
+@Configuration
+public class RedisTemplateBeanPostProcessor implements BeanPostProcessor {
+
+    @Override
+    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+        if(RedisTemplate.class.isAssignableFrom(bean.getClass())) {
+            RedisTemplate redisTemplate = (RedisTemplate)bean;
+            StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
+            redisTemplate.setKeySerializer(stringRedisSerializer);
+            redisTemplate.setValueSerializer(stringRedisSerializer);
+        }
+        return bean;
+    }
+}
+```
+

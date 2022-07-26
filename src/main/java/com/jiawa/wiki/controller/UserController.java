@@ -11,31 +11,29 @@ import com.jiawa.wiki.resp.UserLoginResp;
 import com.jiawa.wiki.resp.UserQueryResp;
 import com.jiawa.wiki.service.UserService;
 import com.jiawa.wiki.util.SnowFlake;
-import io.swagger.annotations.Api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/user")
-@Api(tags = "用户接口管理")
 public class UserController {
 
     final Logger LOG = LoggerFactory.getLogger(UserController.class);
 
-    @Resource
+    @Autowired
     private UserService userService;
 
-    @Resource
+    @Autowired
     private SnowFlake snowFlake = new SnowFlake(1, 1);
 
-    @Resource
+    @Autowired
     private RedisTemplate redisTemplate;
 
     @GetMapping("/list")
@@ -79,6 +77,7 @@ public class UserController {
         LOG.info("生成单点登录token：{}，并放入redis中", token);
         userLoginResp.setToken(token.toString());
         redisTemplate.opsForValue().set(token.toString(), JSONObject.toJSONString(userLoginResp), 3600 * 24, TimeUnit.SECONDS);
+
         resp.setContent(userLoginResp);
         return resp;
     }

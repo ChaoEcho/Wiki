@@ -15,10 +15,10 @@ import com.jiawa.wiki.util.CopyUtil;
 import com.jiawa.wiki.util.SnowFlake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 @Service
@@ -26,13 +26,13 @@ public class DocService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DocService.class);
 
-    @Resource
+    @Autowired
     private DocMapper docMapper;
 
-    @Resource
+    @Autowired
     private ContentMapper contentMapper;
 
-    @Resource
+    @Autowired
     private SnowFlake snowFlake = new SnowFlake(1, 1);
 
     public PageResp<DocQueryResp> list(DocQueryReq req) {
