@@ -1,6 +1,6 @@
 <template>
   <a-layout-header class="header">
-    <div class="logo" />
+    <div class="logo"/>
     <a-menu
         theme="dark"
         mode="horizontal"
@@ -23,7 +23,7 @@
       </a-menu-item>
       <a-menu-item class="login-menu">
         <a v-show="user.id">
-          <span>Hello: {{user.name}}</span>
+          <span>Hello: {{ user.name }}</span>
         </a>
         <a v-show="!user.id" @click="showLoginModal">
           <span>登录</span>
@@ -40,10 +40,10 @@
     >
       <a-form :model="loginUser" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
         <a-form-item label="登录名">
-          <a-input v-model:value="loginUser.loginName" />
+          <a-input v-model:value="loginUser.loginName"/>
         </a-form-item>
         <a-form-item label="密码">
-          <a-input v-model:value="loginUser.password" type="password" />
+          <a-input v-model:value="loginUser.password" type="password"/>
         </a-form-item>
       </a-form>
     </a-modal>
@@ -51,19 +51,19 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import {computed, defineComponent, ref} from 'vue';
 import axios from 'axios';
-import { message } from "ant-design-vue";
+import {message} from "ant-design-vue";
 import store from "@/store";
+
 declare let hexMd5: any;
 declare let KEY: any;
 
 export default defineComponent({
   name: 'the-header',
-  setup () {
+  setup() {
     // Save username once login
-    const user = ref();
-    user.value = {};
+    const user = computed(() => store.state.user);
 
     // To login
     const loginUser = ref({
@@ -86,7 +86,6 @@ export default defineComponent({
         if (data.success) {
           loginModalVisible.value = false;
           message.success("登录成功！");
-          user.value = data.content;
           store.commit("setUser", user.value)
         } else {
           message.error(data.message);
@@ -106,8 +105,8 @@ export default defineComponent({
 </script>
 
 <style>
-  .login-menu {
-    float: right;
-    color: white;
-  }
+.login-menu {
+  float: right;
+  color: white;
+}
 </style>
