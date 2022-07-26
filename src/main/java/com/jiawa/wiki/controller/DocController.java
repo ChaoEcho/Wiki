@@ -6,6 +6,7 @@ import com.jiawa.wiki.resp.CommonResp;
 import com.jiawa.wiki.resp.DocQueryResp;
 import com.jiawa.wiki.resp.PageResp;
 import com.jiawa.wiki.service.DocService;
+import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/doc")
+@Api(tags = "文档管理接口")
 public class DocController {
 
     @Resource
