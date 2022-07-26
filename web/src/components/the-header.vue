@@ -21,11 +21,11 @@
       <a-menu-item key="/about">
         <router-link to="/about">About us</router-link>
       </a-menu-item>
-      <a-menu-item>
-        <a class="login-menu" v-show="user.id">
+      <a-menu-item class="login-menu">
+        <a v-show="user.id">
           <span>Hello: {{user.name}}</span>
         </a>
-        <a class="login-menu" v-show="!user.id" @click="showLoginModal">
+        <a v-show="!user.id" @click="showLoginModal">
           <span>登录</span>
         </a>
       </a-menu-item>
@@ -54,6 +54,7 @@
 import { defineComponent, ref } from 'vue';
 import axios from 'axios';
 import { message } from "ant-design-vue";
+import store from "@/store";
 declare let hexMd5: any;
 declare let KEY: any;
 
@@ -86,6 +87,7 @@ export default defineComponent({
           loginModalVisible.value = false;
           message.success("登录成功！");
           user.value = data.content;
+          store.commit("setUser", user.value)
         } else {
           message.error(data.message);
         }
@@ -104,8 +106,8 @@ export default defineComponent({
 </script>
 
 <style>
-.login-menu {
-  float: right;
-  color: white;
-}
+  .login-menu {
+    float: right;
+    color: white;
+  }
 </style>
