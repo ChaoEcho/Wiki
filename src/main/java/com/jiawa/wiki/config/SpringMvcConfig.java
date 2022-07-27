@@ -26,7 +26,13 @@ public class SpringMvcConfig implements WebMvcConfigurer {
                         "/doc/all/**",
                         "/doc/vote/**",
                         "/doc/find-content/**",
-                        "/ebook-snapshot/**"
+                        "/ebook-snapshot/**",
+                        //这些都是Swagger的内容
+                        "/doc.html",
+                        "/webjars/**",
+                        "/error",
+                        "/swagger-resources"
+                        //到这
                 );
 
     }
