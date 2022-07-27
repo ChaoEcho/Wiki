@@ -21,15 +21,22 @@
       <a-menu-item key="/about">
         <router-link to="/about">About us</router-link>
       </a-menu-item>
-      <a-menu-item class="login-menu">
-        <a v-show="user.id">
-          <span>Hello: {{ user.name }}</span>
+      <a class="login-menu" v-show="user.id" @click="showLoginModal">
+        Hello: {{ user.name }}
+      </a>
+      <a-popconfirm
+          title="确认退出登录?"
+          ok-text="是"
+          cancel-text="否"
+          @confirm="logout()"
+      >
+        <a class="login-menu" v-show="user.id">
+          <span>退出登录</span>
         </a>
-        <a v-show="!user.id" @click="showLoginModal">
-          <span>登录</span>
-        </a>
-      </a-menu-item>
-
+      </a-popconfirm>
+      <a class="login-menu" v-show="!user.id" @click="showLoginModal">
+        <span>登录</span>
+      </a>
     </a-menu>
 
     <a-modal
@@ -68,7 +75,7 @@ export default defineComponent({
     // To login
     const loginUser = ref({
       loginName: "test",
-      password: "test"
+      password: "123456"
     });
     const loginModalVisible = ref(false);
     const loginModalLoading = ref(false);
@@ -86,11 +93,24 @@ export default defineComponent({
         if (data.success) {
           loginModalVisible.value = false;
           message.success("登录成功！");
-          store.commit("setUser", user.value)
+          store.commit("setUser", data.content)
         } else {
           message.error(data.message);
         }
       });
+    };
+
+    const logout = () => {
+      console.log("退出登录！");
+      axios.get('/user/logout/' + user.value.token).then((response) => {
+        const data = response.data;
+        if (data.success) {
+          message.success("退出登录成功！");
+          store.commit("setUser", {});
+        } else {
+          message.error(data.message);
+        }
+      })
     };
     return {
       loginModalVisible,
@@ -98,7 +118,8 @@ export default defineComponent({
       showLoginModal,
       loginUser,
       login,
-      user
+      user,
+      logout,
     }
   }
 });
@@ -106,7 +127,8 @@ export default defineComponent({
 
 <style>
 .login-menu {
-  float: right;
   color: white;
+  padding-left: 10px;
+  float: right;
 }
 </style>
