@@ -15,7 +15,20 @@
           </a-tree>
         </a-col>
         <a-col :span="18">
+          <div>
+            <h2>{{doc.name}}</h2>
+            <div>
+              <span>阅读数：{{doc.viewCount}}</span> &nbsp; &nbsp;
+              <span>点赞数：{{doc.voteCount}}</span>
+            </div>
+            <a-divider style="height: 2px; background-color: #9999cc"/>
+          </div>
           <div class="wangeditor" :innerHTML="html"></div>
+          <div class="vote-div">
+            <a-button type="primary" shape="round" :size="'large'" @click="vote">
+              <template #icon><LikeOutlined /> &nbsp;点赞：{{doc.voteCount}} </template>
+            </a-button>
+          </div>
         </a-col>
       </a-row>
     </a-layout-content>
@@ -25,20 +38,21 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref, createVNode } from 'vue';
 import axios from 'axios';
-import { message, Modal } from "ant-design-vue";
-import { Tool } from '@/util/tool';
+import {message} from 'ant-design-vue';
+import {Tool} from "@/util/tool";
 import {useRoute} from "vue-router";
-import ExclamationCircleOutlined from "@ant-design/icons-vue/ExclamationCircleOutlined";
-import E from 'wangeditor';
 
 export default defineComponent({
-  name: 'AdminDoc',
+  name: 'Doc',
   setup() {
     const route = useRoute();
     const docs = ref();
     const html = ref();
     const defaultSelectedKeys = ref();
     defaultSelectedKeys.value = [];
+    // 当前选中的文档
+    const doc = ref();
+    doc.value = {};
 
     /**
      * 一级文档树，children属性就是二级文档
@@ -83,6 +97,8 @@ export default defineComponent({
           if (Tool.isNotEmpty(level1)) {
             defaultSelectedKeys.value = [level1.value[0].id];
             handleQueryContent(level1.value[0].id);
+            // 初始显示文档信息
+            doc.value = level1.value[0];
           }
         } else {
           message.error(data.message);
@@ -93,9 +109,23 @@ export default defineComponent({
     const onSelect = (selectedKeys: any, info: any) => {
       console.log('selected', selectedKeys, info);
       if (Tool.isNotEmpty(selectedKeys)) {
+        // 选中某一节点时，加载该节点的文档信息
+        doc.value = info.selectedNodes[0].props;
         // 加载内容
         handleQueryContent(selectedKeys[0]);
       }
+    };
+
+    // 点赞
+    const vote = () => {
+      axios.get('/doc/vote/' + doc.value.id).then((response) => {
+        const data = response.data;
+        if (data.success) {
+          doc.value.voteCount++;
+        } else {
+          message.error(data.message);
+        }
+      });
     };
 
     onMounted(() => {
@@ -106,7 +136,9 @@ export default defineComponent({
       level1,
       html,
       onSelect,
-      defaultSelectedKeys
+      defaultSelectedKeys,
+      doc,
+      vote
     }
   }
 });
@@ -129,6 +161,7 @@ export default defineComponent({
   border-bottom: 2px solid #ccc;
   text-align: center;
 }
+
 /* blockquote 样式 */
 .wangeditor blockquote {
   display: block;
@@ -139,6 +172,7 @@ export default defineComponent({
   font-size: 100%;
   background-color: #f1f1f1;
 }
+
 /* code 样式 */
 .wangeditor code {
   display: inline-block;
@@ -152,15 +186,35 @@ export default defineComponent({
 .wangeditor pre code {
   display: block;
 }
+
 /* ul ol 样式 */
 .wangeditor ul, ol {
   margin: 10px 0 10px 20px;
 }
+
 /* 和antdv p冲突，覆盖掉 */
 .wangeditor blockquote p {
   font-family:"YouYuan";
   margin: 20px 10px !important;
   font-size: 16px !important;
   font-weight:600;
+}
+
+/* 点赞 */
+.vote-div {
+  padding: 15px;
+  text-align: center;
+}
+
+/* 图片自适应 */
+.wangeditor img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* 视频自适应 */
+.wangeditor iframe {
+  width: 100%;
+  height: 400px;
 }
 </style>

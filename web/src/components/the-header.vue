@@ -114,6 +114,10 @@ export default defineComponent({
     // 退出登录
     const logout = () => {
       console.log("退出登录开始");
+      loginUser.value = {
+        loginName: "test",
+        password: "123456"
+      };
       axios.get('/user/logout/' + user.value.token).then((response) => {
         const data = response.data;
         if (data.success) {
