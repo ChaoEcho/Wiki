@@ -289,3 +289,164 @@ public class RedisTemplateBeanPostProcessor implements BeanPostProcessor {
 }
 ```
 
+## 11. WebSocket
+
+### 11.1 添加依赖
+
+```XML
+<!--WebSocket-->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-websocket</artifactId>
+</dependency>
+```
+
+### 11.2 添加配置文件
+
+```JAVA
+@Configuration
+public class WebSocketConfig {
+    @Bean
+    public ServerEndpointExporter serverEndpointExporter() {
+        return new ServerEndpointExporter();
+    }
+}
+```
+
+### 11.3 服务端
+
+```JAVA
+@Component
+@ServerEndpoint("/ws/{token}")
+public class WebSocketServer {
+    private static final Logger LOG = LoggerFactory.getLogger(WebSocketServer.class);
+
+    /**
+     * 每个客户端一个token
+     */
+    private String token = "";
+
+    private static HashMap<String, Session> map = new HashMap<>();
+
+    /**
+     * 连接成功
+     */
+    @OnOpen
+    public void onOpen(Session session, @PathParam("token") String token) {
+        map.put(token, session);
+        this.token = token;
+        LOG.info("有新连接：token：{}，session id：{}，当前连接数：{}", token, session.getId(), map.size());
+    }
+
+    /**
+     * 连接关闭
+     */
+    @OnClose
+    public void onClose(Session session) {
+        map.remove(this.token);
+        LOG.info("连接关闭，token：{}，session id：{}！当前连接数：{}", this.token, session.getId(), map.size());
+    }
+
+    /**
+     * 收到消息
+     */
+    @OnMessage
+    public void onMessage(String message, Session session) {
+        LOG.info("收到消息：{}，内容：{}", token, message);
+    }
+
+    /**
+     * 连接错误
+     */
+    @OnError
+    public void onError(Session session, Throwable error) {
+        LOG.error("发生错误", error);
+    }
+
+    /**
+     * 群发消息
+     */
+    public void sendInfo(String message) {
+        for (String token : map.keySet()) {
+            Session session = map.get(token);
+            try {
+                session.getBasicRemote().sendText(message);
+            } catch (IOException e) {
+                LOG.error("推送消息失败：{}，内容：{}", token, message);
+            }
+            LOG.info("推送消息：{}，内容：{}", token, message);
+        }
+    }
+}
+```
+
+### 11.4 VUE配置
+
+![image-20220727211148168](https://echochao.oss-cn-hangzhou.aliyuncs.com/img/20220727211148.png)
+
+### 11.5 前端连接WebSocket
+
+```javascript
+<script lang="ts">
+import { defineComponent, computed, onMounted } from 'vue';
+import store from "@/store";
+import {Tool} from "@/util/tool";
+import { notification } from 'ant-design-vue';
+
+export default defineComponent({
+  name: 'the-footer',
+  setup() {
+    const user = computed(() => store.state.user);
+
+    let websocket: any;
+    let token: any;
+    const onOpen = () => {
+      console.log('WebSocket连接成功，状态码：', websocket.readyState)
+    };
+    const onMessage = (event: any) => {
+      console.log('WebSocket收到消息：', event.data);
+      notification['info']({
+        message: '收到消息',
+        description: event.data,
+      });
+    };
+    const onError = () => {
+      console.log('WebSocket连接错误，状态码：', websocket.readyState)
+    };
+    const onClose = () => {
+      console.log('WebSocket连接关闭，状态码：', websocket.readyState)
+    };
+    const initWebSocket = () => {
+      // 连接成功
+      websocket.onopen = onOpen;
+      // 收到消息的回调
+      websocket.onmessage = onMessage;
+      // 连接错误
+      websocket.onerror = onError;
+      // 连接关闭的回调
+      websocket.onclose = onClose;
+    };
+
+    onMounted(() => {
+      // WebSocket
+      if ('WebSocket' in window) {
+        token = Tool.uuid(10);
+        // 连接地址：ws://127.0.0.1:8880/ws/xxx
+        websocket = new WebSocket(process.env.VUE_APP_WS_SERVER + '/ws/' + token);
+        initWebSocket()
+
+        // 关闭
+        // websocket.close();
+      } else {
+        alert('当前浏览器 不支持')
+      }
+    });
+
+    return {
+      user
+    }
+  }
+});
+</script>
+```
+
