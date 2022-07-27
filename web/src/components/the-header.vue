@@ -91,6 +91,12 @@ export default defineComponent({
     const login = () => {
       console.log("开始登录");
       loginModalLoading.value = true;
+      const length=loginUser.value.password.length;
+      if(length<6||length>32){
+        message.error("【密码长度】应为6-32位！");
+        loginModalLoading.value = false;
+        return;
+      }
       loginUser.value.password = hexMd5(loginUser.value.password + KEY);
       axios.post('/user/login', loginUser.value).then((response) => {
         loginModalLoading.value = false;
