@@ -1,14 +1,14 @@
 <template>
   <a-layout-footer style="text-align: center">
-    甲蛙电子书<span v-show="user.id">，欢迎：{{user.name}}</span>
+    甲蛙电子书<span v-show="user.id">，欢迎：{{ user.name }}</span>
   </a-layout-footer>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, onMounted } from 'vue';
+import {defineComponent, computed, onMounted} from 'vue';
 import store from "@/store";
 import {Tool} from "@/util/tool";
-import { notification } from 'ant-design-vue';
+import {notification} from 'ant-design-vue';
 
 export default defineComponent({
   name: 'the-footer',

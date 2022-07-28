@@ -21,23 +21,22 @@
       <a-menu-item key="/about">
         <router-link to="/about">关于我们</router-link>
       </a-menu-item>
-      <a-menu-item :style="user.id? {} : {display:'none'}">
-        <a-popconfirm
-            title="确认退出登录?"
-            ok-text="是"
-            cancel-text="否"
-            @confirm="logout()"
-        >
-          <a class="login-menu" v-show="user.id">
-            <span>退出登录</span>
-          </a>
-        </a-popconfirm>
+      <a-menu-item key="/aliyun">
+        <router-link to="/aliyun">阿里云优惠</router-link>
       </a-menu-item>
-      <a-menu-item :style="user.id? {} : {display:'none'}">
+      <a-popconfirm
+          title="确认退出登录?"
+          ok-text="是"
+          cancel-text="否"
+          @confirm="logout()"
+      >
         <a class="login-menu" v-show="user.id">
-          <span>您好：{{user.name}}</span>
+          <span>退出登录</span>
         </a>
-      </a-menu-item>
+      </a-popconfirm>
+      <a class="login-menu" v-show="user.id">
+        <span>您好：{{user.name}}</span>
+      </a>
       <a class="login-menu" v-show="!user.id" @click="showLoginModal">
         <span>登录</span>
       </a>
@@ -62,7 +61,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, ref, computed, onMounted} from 'vue';
+import { defineComponent, ref, computed } from 'vue';
 import axios from 'axios';
 import { message } from 'ant-design-vue';
 import store from "@/store";
@@ -79,7 +78,7 @@ export default defineComponent({
     // 用来登录
     const loginUser = ref({
       loginName: "test",
-      password: "123456"
+      password: "test"
     });
     const loginModalVisible = ref(false);
     const loginModalLoading = ref(false);
@@ -91,12 +90,6 @@ export default defineComponent({
     const login = () => {
       console.log("开始登录");
       loginModalLoading.value = true;
-      const length=loginUser.value.password.length;
-      if(length<6||length>32){
-        message.error("【密码长度】应为6-32位！");
-        loginModalLoading.value = false;
-        return;
-      }
       loginUser.value.password = hexMd5(loginUser.value.password + KEY);
       axios.post('/user/login', loginUser.value).then((response) => {
         loginModalLoading.value = false;
@@ -104,6 +97,7 @@ export default defineComponent({
         if (data.success) {
           loginModalVisible.value = false;
           message.success("登录成功！");
+
           store.commit("setUser", data.content);
         } else {
           message.error(data.message);
@@ -114,10 +108,6 @@ export default defineComponent({
     // 退出登录
     const logout = () => {
       console.log("退出登录开始");
-      loginUser.value = {
-        loginName: "test",
-        password: "123456"
-      };
       axios.get('/user/logout/' + user.value.token).then((response) => {
         const data = response.data;
         if (data.success) {
@@ -128,14 +118,6 @@ export default defineComponent({
         }
       });
     };
-
-    const init =()=>{
-      store.commit("setUser", {});
-    }
-
-    onMounted(() => {
-      init();
-    });
 
     return {
       loginModalVisible,
