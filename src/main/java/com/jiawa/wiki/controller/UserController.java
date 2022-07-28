@@ -11,6 +11,7 @@ import com.jiawa.wiki.resp.UserLoginResp;
 import com.jiawa.wiki.resp.UserQueryResp;
 import com.jiawa.wiki.service.UserService;
 import com.jiawa.wiki.util.SnowFlake;
+import io.swagger.annotations.Api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/user")
+@Api(tags = "用户管理接口")
 public class UserController {
 
     final Logger LOG = LoggerFactory.getLogger(UserController.class);
