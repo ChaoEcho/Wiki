@@ -5,12 +5,13 @@
           mode="inline"
           :style="{ height: '100%', borderRight: 0 }"
           @click="handleClick"
+          :openKeys="openKeys"
       >
         <a-menu-item key="welcome">
           <MailOutlined />
           <span>欢迎</span>
         </a-menu-item>
-        <a-sub-menu v-for="item in level1" :key="item.id">
+        <a-sub-menu v-for="item in level1" :key="item.id" :disabled="true">
           <template v-slot:title>
             <span><user-outlined />{{item.name}}</span>
           </template>
@@ -18,13 +19,16 @@
             <MailOutlined /><span>{{child.name}}</span>
           </a-menu-item>
         </a-sub-menu>
+        <a-menu-item key="tip" :disabled="true">
+          <span>以上菜单在分类管理配置</span>
+        </a-menu-item>
       </a-menu>
     </a-layout-sider>
     <a-layout-content
         :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
     >
       <div class="welcome" v-show="isShowWelcome">
-        <h1>欢迎使用知识库</h1>
+        <the-welcome></the-welcome>
       </div>
       <a-list v-show="!isShowWelcome" item-layout="vertical" size="large" :grid="{ gutter: 20, column: 3 }" :data-source="ebooks">
         <template #renderItem="{ item }">
@@ -49,7 +53,7 @@
                   {{ item.name }}
                 </router-link>
               </template>
-              <template #avatar><a-avatar :src="item.cover" /></template>
+              <template #avatar><a-avatar :src="item.cover"/></template>
             </a-list-item-meta>
           </a-list-item>
         </template>
@@ -63,8 +67,7 @@ import { defineComponent, onMounted, ref, reactive, toRef } from 'vue';
 import axios from 'axios';
 import { message } from 'ant-design-vue';
 import {Tool} from "@/util/tool";
-
-// Fake data
+import TheWelcome from '@/components/the-welcome.vue';
 
 // const listData: any = [];
 // for (let i = 0; i < 23; i++) {
@@ -81,9 +84,14 @@ import {Tool} from "@/util/tool";
 
 export default defineComponent({
   name: 'Home',
+  components: {
+    TheWelcome
+  },
   setup() {
     const ebooks = ref();
     // const ebooks1 = reactive({books: []});
+
+    const openKeys =  ref();
 
     const level1 =  ref();
     let categorys: any;
@@ -96,6 +104,13 @@ export default defineComponent({
         if (data.success) {
           categorys = data.content;
           console.log("原始数组：", categorys);
+
+          // 加载完分类后，将侧边栏全部展开
+          openKeys.value = [];
+          for (let i = 0; i < categorys.length; i++) {
+            openKeys.value.push(categorys[i].id)
+          }
+
           level1.value = [];
           level1.value = Tool.array2Tree(categorys, 0);
           console.log("树形结构：", level1.value);
@@ -131,10 +146,12 @@ export default defineComponent({
         isShowWelcome.value = false;
         handleQueryEbook();
       }
+      // isShowWelcome.value = value.key === 'welcome';
     };
 
     onMounted(() => {
       handleQueryCategory();
+      // handleQueryEbook();
     });
 
     return {
@@ -147,15 +164,18 @@ export default defineComponent({
         },
         pageSize: 3,
       },
-/*      actions: [
-        { type: 'StarOutlined', text: '156' },
-        { type: 'LikeOutlined', text: '156' },
-        { type: 'MessageOutlined', text: '2' },
-      ],*/
+      // actions: [
+      //   { type: 'StarOutlined', text: '156' },
+      //   { type: 'LikeOutlined', text: '156' },
+      //   { type: 'MessageOutlined', text: '2' },
+      // ],
+
       handleClick,
       level1,
 
-      isShowWelcome
+      isShowWelcome,
+
+      openKeys
     }
   }
 });
