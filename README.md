@@ -450,3 +450,59 @@ export default defineComponent({
 </script>
 ```
 
+## 12. RocketMQ
+
+### 12.1 添加依赖
+
+```XML
+<!--RocketMQ-->
+<dependency>
+    <groupId>org.apache.rocketmq</groupId>
+    <artifactId>rocketmq-spring-boot-starter</artifactId>
+    <version>2.0.2</version>
+</dependency>
+```
+
+### 12.2 添加配置
+
+```properties
+#rocketmq
+rocketmq.name-server=127.0.0.1:9876
+rocketmq.producer.group=default
+```
+
+### 12.3 生产者
+
+```JAVA
+@Service
+public class DocService {
+    @Resource
+    private RocketMQTemplate rocketMQTemplate;
+
+    public void vote(Long id) {
+        rocketMQTemplate.convertAndSend("VOTE_TOPIC", "【" + docDb.getName() + "】被点赞！");
+    }
+}
+```
+
+### 12.4 消费者
+
+```JAVA
+@Service
+@RocketMQMessageListener(consumerGroup = "default", topic = "VOTE_TOPIC")
+public class VoteTopicConsumer implements RocketMQListener<MessageExt> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(VoteTopicConsumer.class);
+
+    @Resource
+    public WebSocketServer webSocketServer;
+
+    @Override
+    public void onMessage(MessageExt messageExt) {
+        byte[] body = messageExt.getBody();
+        LOG.info("ROCKETMQ收到消息：{}", new String(body));
+        webSocketServer.sendInfo(new String(body));
+    }
+}
+```
+
